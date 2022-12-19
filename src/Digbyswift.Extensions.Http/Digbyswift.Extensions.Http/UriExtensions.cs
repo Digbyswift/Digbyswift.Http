@@ -44,7 +44,7 @@ namespace Digbyswift.Extensions.Http
                 : uri.ToBareUri().PathAndQuery;
         }
 
-        public static DomainInfo DomainInfo(this Uri uri)
+        public static DomainInfo GetDomainInfo(this Uri uri)
         {
             if (!uri.IsAbsoluteUri)
                 throw new ArgumentException("Uri must be absolute", nameof(uri));

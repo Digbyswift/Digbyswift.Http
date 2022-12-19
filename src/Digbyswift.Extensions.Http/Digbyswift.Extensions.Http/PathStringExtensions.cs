@@ -22,7 +22,7 @@ namespace Digbyswift.Extensions.Http
            return Segments(pathString).ElementAt(index);
        }
 
-       public static string SegmentAtOrDefault(this PathString pathString, int index, string defaultSegment = null)
+       public static string? SegmentAtOrDefault(this PathString pathString, int index, string? defaultSegment = null)
        {
            return Segments(pathString).ElementAtOrDefault(index) ?? defaultSegment;
        }
