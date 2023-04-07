@@ -1,19 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Digbyswift.Core.Constants;
+using Digbyswift.Core.Extensions;
 using Microsoft.AspNetCore.Http;
 
-namespace Digbyswift.Extensions.Http
+namespace Digbyswift.Http
 {
 
     public static class PathStringExtensions
     {
        public static IEnumerable<string> Segments(this PathString pathString)
        {
-           if (pathString == null)
-                throw new ArgumentNullException(nameof(pathString));
-
            return pathString.Value?.SplitAndTrim(CharConstants.ForwardSlash) ?? Enumerable.Empty<string>();
        }
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
-namespace Digbyswift.Extensions.Http
+namespace Digbyswift.Http
 {
 	public static class HttpResponseExtensions
 	{

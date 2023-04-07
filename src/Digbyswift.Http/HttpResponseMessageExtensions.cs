@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 
-namespace Digbyswift.Extensions.Http
+namespace Digbyswift.Http
 {
     public static class HttpResponseMessageExtensions
     {

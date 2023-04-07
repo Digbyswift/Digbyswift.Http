@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Digbyswift.Extensions.Http\Digbyswift.Extensions.Http.csproj" />
+      <ProjectReference Include="..\Digbyswift.Http\Digbyswift.Http.csproj" />
     </ItemGroup>
 
 </Project>

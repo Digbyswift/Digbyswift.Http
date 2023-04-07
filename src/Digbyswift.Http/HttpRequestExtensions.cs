@@ -1,12 +1,15 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using Nager.PublicSuffix;
 
-namespace Digbyswift.Extensions.Http
+namespace Digbyswift.Http
 {
     public static class HttpRequestExtensions
     {
@@ -175,13 +178,23 @@ namespace Digbyswift.Extensions.Http
         }
         
         #endregion
+        
+        /// <summary>
+        /// Returns the passed request decorated with any forwarded properties, specifically
+        /// Request.Host and Request.Headers["Host"]. If the request has not been forwarded, the
+        /// request will remain identical to the passed request.
+        /// </summary>
+        public static HttpRequest AsForwarded(this HttpRequest request)
+        {
+            return new ForwardedHttpRequest(request);
+        }
 
         /// <summary>
         /// Request-caches Nager.PublicPrefix.DomainParser
         /// </summary>
         public static DomainInfo GetDomainInfo(this HttpRequest request)
         {
-            const string domainInfoKey = "Digbyswift.Extensions.Http.DomainInfo";
+            const string domainInfoKey = "Digbyswift.Http.DomainInfo";
             
             var domainParser = new DomainParser(new WebTldRuleProvider());
 

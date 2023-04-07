@@ -1,6 +1,10 @@
-# Digbyswift.Extensions.Http
+# Digbyswift.Http
 
-A library of useful HTTP-based extensions.
+[![NuGet version (Digbyswift.Http)](https://img.shields.io/nuget/v/Digbyswift.Http.svg)](https://www.nuget.org/packages/Digbyswift.Http/)
+
+A library of useful classes and HTTP-based extensions.
+
+> Please note, as of v1.0.3 this package has been renamed from Digbyswift.Extensions.Http to Digbyswift.Http.
 
 ## Uri
 
@@ -10,6 +14,11 @@ A library of useful HTTP-based extensions.
 - `GetDomainInfo()`
 
 ## HttpRequest
+
+#### ForwardedHttpRequest
+
+- `AsForwarded()`
+
 
 #### Uri/Url
 

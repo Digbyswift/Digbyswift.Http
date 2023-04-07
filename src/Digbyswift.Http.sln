@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digbyswift.Extensions.Http", "Digbyswift.Extensions.Http\Digbyswift.Extensions.Http.csproj", "{70657AF1-494B-42D0-B7BA-B8C1DE882ACA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digbyswift.Http", "Digbyswift.Http\Digbyswift.Http.csproj", "{70657AF1-494B-42D0-B7BA-B8C1DE882ACA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digbyswift.Extensions.Http.Tests", "Digbyswift.Extensions.Http.Tests\Digbyswift.Extensions.Http.Tests.csproj", "{8D519146-23A7-47DD-9A90-B8D95B60DB3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digbyswift.Http.Tests", "Digbyswift.Http.Tests\Digbyswift.Http.Tests.csproj", "{8D519146-23A7-47DD-9A90-B8D95B60DB3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

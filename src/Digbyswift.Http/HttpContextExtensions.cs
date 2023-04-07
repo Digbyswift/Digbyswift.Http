@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Digbyswift.Extensions.Http
+namespace Digbyswift.Http
 {
     public static class HttpContextExtensions
     {

@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Digbyswift.Http</Title>
+        <Authors>Digbyswift Ltd</Authors>
+        <Copyright>Copyright © Digbyswift Ltd</Copyright>
+        <PackageProjectUrl>https://github.com/digbyswift/Digbyswift.Http</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/digbyswift/Digbyswift.Http</RepositoryUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>c# http utility extensions</PackageTags>
+        <AssemblyVersion>1.0.3</AssemblyVersion>
+        <PackageVersion>1.0.3</PackageVersion>
+        <FileVersion>1.0.3</FileVersion>
+        <LangVersion>default</LangVersion>
+        <PackageIcon>package-icon.png</PackageIcon>
+        <PackageIconUrl>package-icon.png</PackageIconUrl>
+        <Nullable>enable</Nullable>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="../../../package-icon.png" Pack="true" PackagePath="" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="../../../LICENSE" Pack="true" PackagePath="" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="../../../README.md" Pack="true" PackagePath="" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Digbyswift.Core" Version="2.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />
+        <PackageReference Include="Nager.PublicSuffix" Version="2.4.0" />
+    </ItemGroup>
+</Project>
