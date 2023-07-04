@@ -10,9 +10,9 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>c# http utility extensions</PackageTags>
-        <AssemblyVersion>1.0.4</AssemblyVersion>
-        <PackageVersion>1.0.4</PackageVersion>
-        <FileVersion>1.0.4</FileVersion>
+        <AssemblyVersion>1.1.0</AssemblyVersion>
+        <PackageVersion>1.1.0</PackageVersion>
+        <FileVersion>1.1.0</FileVersion>
         <LangVersion>default</LangVersion>
         <PackageIcon>package-icon.png</PackageIcon>
         <PackageIconUrl>package-icon.png</PackageIconUrl>
