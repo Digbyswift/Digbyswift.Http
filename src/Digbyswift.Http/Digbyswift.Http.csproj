@@ -10,9 +10,9 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>c# http utility extensions</PackageTags>
-        <AssemblyVersion>1.0.3</AssemblyVersion>
-        <PackageVersion>1.0.3</PackageVersion>
-        <FileVersion>1.0.3</FileVersion>
+        <AssemblyVersion>1.0.4</AssemblyVersion>
+        <PackageVersion>1.0.4</PackageVersion>
+        <FileVersion>1.0.4</FileVersion>
         <LangVersion>default</LangVersion>
         <PackageIcon>package-icon.png</PackageIcon>
         <PackageIconUrl>package-icon.png</PackageIconUrl>
@@ -20,16 +20,16 @@
         <RepositoryType>git</RepositoryType>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="../../../package-icon.png" Pack="true" PackagePath="" />
+        <None Include="../../package-icon.png" Pack="true" PackagePath="" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="../../../LICENSE" Pack="true" PackagePath="" />
+        <None Include="../../LICENSE" Pack="true" PackagePath="" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="../../../README.md" Pack="true" PackagePath="" />
+        <None Include="../../README.md" Pack="true" PackagePath="" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Digbyswift.Core" Version="2.0.0" />
+        <PackageReference Include="Digbyswift.Core" Version="2.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
         <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />
         <PackageReference Include="Nager.PublicSuffix" Version="2.4.0" />

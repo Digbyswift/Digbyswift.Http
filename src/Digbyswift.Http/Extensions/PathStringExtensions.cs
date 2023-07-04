@@ -4,7 +4,7 @@ using Digbyswift.Core.Constants;
 using Digbyswift.Core.Extensions;
 using Microsoft.AspNetCore.Http;
 
-namespace Digbyswift.Http
+namespace Digbyswift.Http.Extensions
 {
 
     public static class PathStringExtensions

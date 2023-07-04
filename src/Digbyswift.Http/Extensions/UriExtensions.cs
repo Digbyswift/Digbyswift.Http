@@ -3,7 +3,7 @@ using System.Linq;
 using Digbyswift.Core.Constants;
 using Nager.PublicSuffix;
 
-namespace Digbyswift.Http
+namespace Digbyswift.Http.Extensions
 {
     public static class UriExtensions
     {

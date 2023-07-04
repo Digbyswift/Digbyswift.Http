@@ -1,15 +1,12 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using Nager.PublicSuffix;
 
-namespace Digbyswift.Http
+namespace Digbyswift.Http.Extensions
 {
     public static class HttpRequestExtensions
     {
@@ -119,16 +116,18 @@ namespace Digbyswift.Http
         {
             return request.Method.Equals(HttpMethods.Post, StringComparison.OrdinalIgnoreCase);
         }
-        
+
+        /// <summary>
+        /// Returns true if the request has the non-standard X-Requested-With header and the value, XMLHttpRequest
+        /// </summary>
         public static bool IsAjaxRequest(this HttpRequest request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            const string xRequestedWith = "X-Requested-With";
             const string xRequestedWithValue = "XMLHttpRequest";
 
-            return request.Headers[xRequestedWith] == xRequestedWithValue;
+            return request.Headers[NonStandardHeaderNames.XRequestedWith] == xRequestedWithValue;
         }
         
         /// <summary>
@@ -138,14 +137,14 @@ namespace Digbyswift.Http
         {
             string? clientIp = null;
             
-            var azureClientIpHeader = request.Headers["X-Azure-ClientIP"];
+            var azureClientIpHeader = request.Headers[NonStandardHeaderNames.XAzureClientIp];
             if (azureClientIpHeader.Count > 0)
             {
                 clientIp = azureClientIpHeader[0];
             }
             else
             {
-                var forwardedIpHeader = request.Headers["X-Forwarded-For"];
+                var forwardedIpHeader = request.Headers[NonStandardHeaderNames.XForwardedFor];
                 if (forwardedIpHeader.Count > 0)
                 {
                     clientIp = forwardedIpHeader[0];

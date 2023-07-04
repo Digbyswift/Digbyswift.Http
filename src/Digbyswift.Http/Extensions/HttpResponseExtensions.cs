@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
-namespace Digbyswift.Http
+namespace Digbyswift.Http.Extensions
 {
 	public static class HttpResponseExtensions
 	{
-		private static readonly string CacheControlValue = "no-cache, no-store, must-revalidate";
-		private static readonly string ExpiresValue = "-1";
-		private static readonly string PragmaValue = "no-cache";
+		private const string CacheControlValue = "no-cache, no-store, must-revalidate";
+		private const string ExpiresValue = "-1";
+		private const string PragmaValue = "no-cache";
 
 		public static void SetNoCacheHeaders(this HttpResponse response)
 		{
