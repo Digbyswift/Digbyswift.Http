@@ -18,6 +18,7 @@
         <PackageIconUrl>package-icon.png</PackageIconUrl>
         <Nullable>enable</Nullable>
         <RepositoryType>git</RepositoryType>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     </PropertyGroup>
     <ItemGroup>
         <None Include="../../package-icon.png" Pack="true" PackagePath="" />
