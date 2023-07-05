@@ -67,7 +67,7 @@ namespace Digbyswift.Http.Extensions
                 return null;
 
             var referrer = referrerValue[0];
-            if (referrer == null || !Uri.TryCreate(referrer, UriKind.RelativeOrAbsolute, out Uri? referringUri))
+            if (referrer == null || !Uri.TryCreate(referrer, UriKind.RelativeOrAbsolute, out var referringUri))
                 return null;
 
             if (request.GetAbsoluteBaseUri().IsBaseOf(referringUri))
@@ -151,7 +151,7 @@ namespace Digbyswift.Http.Extensions
                 }
             }
             
-            if (clientIp != null && IPAddress.TryParse(clientIp, out IPAddress? ipAddress))
+            if (clientIp != null && IPAddress.TryParse(clientIp, out var ipAddress))
                 return ipAddress;
 
             return request.HttpContext.Connection.RemoteIpAddress;
@@ -222,21 +222,18 @@ namespace Digbyswift.Http.Extensions
             return Core.RegularExpressions.Regex.HasFileExtension.Value.IsMatch(request.Path);
         }
         
-        private static readonly string[] ImageExtensions = new string[3]
-        {
-            ".png", ".jpg", ".jpeg"
-        };
+        private static readonly string[] ImageExtensions = { ".png", ".jpg", ".jpeg" };
 
         public static bool IsPngOrJpeg(this HttpRequest request)
         {
             var path = request.Path.ToString();
 
-            return ImageExtensions.Any(x => path.EndsWith(x));
+            return ImageExtensions.Any(x => path.EndsWith(x, StringComparison.OrdinalIgnoreCase));
         }
 
         public static bool IsSvg(this HttpRequest request)
         {
-            return request.Path.Value.EndsWith(".svg");
+            return request.Path.Value.EndsWith(".svg", StringComparison.OrdinalIgnoreCase);
         }
 
         public static string PathAndQueryReplaceKey(this HttpRequest request, string replaceKey, object value)
@@ -253,7 +250,7 @@ namespace Digbyswift.Http.Extensions
             newQueryString.Remove(replaceKey);
 
             // this gets the page path from root without QueryString
-            string pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
+            var pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
 
             return newQueryString.Count > 0
                 ? $"{pagePathWithoutQueryString}?{replaceKey}={value}&{newQueryString}"
@@ -277,7 +274,7 @@ namespace Digbyswift.Http.Extensions
             newQueryString.Remove(excludeKey);
 
             // this gets the page path from root without QueryString
-            string pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
+            var pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
 
             return newQueryString.Count > 0
                 ? $"{pagePathWithoutQueryString}?{newQueryString}"
