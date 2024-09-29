@@ -21,7 +21,7 @@
         <None Include="../../README.md" Pack="true" PackagePath="" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Digbyswift.Core" Version="2.1.0" />
+        <PackageReference Include="Digbyswift.Core" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
         <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />
         <PackageReference Include="Nager.PublicSuffix" Version="2.4.0" />
