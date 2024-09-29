@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Web;
+using Digbyswift.Core.Constants;
+using Digbyswift.Http.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using Nager.PublicSuffix;
@@ -41,7 +43,7 @@ namespace Digbyswift.Http.Extensions
         {
             return request.GetAbsoluteBaseUri().ToString();
         }
-        
+
         #endregion
 
         #region Referrer
@@ -51,10 +53,18 @@ namespace Digbyswift.Http.Extensions
         /// </summary>
         public static bool HasReferrer(this HttpRequest request)
         {
-            if (!request.Headers.ContainsKey(HeaderNames.Referer))
-                return false;
+            return request.Headers.TryGetValue(HeaderNames.Referer, out var headerValue) && !String.IsNullOrWhiteSpace(headerValue);
+        }
 
-            return !String.IsNullOrWhiteSpace(request.Headers.ContainsKey(HeaderNames.Referer).ToString());
+        /// <summary>
+        /// Returns the Referrer header value if present and not whitespace, otherwise null.
+        /// </summary>
+        public static string? GetReferrer(this HttpRequest request)
+        {
+            if (!request.Headers.TryGetValue(HeaderNames.Referer, out var headerValue) || String.IsNullOrWhiteSpace(headerValue))
+                return null;
+
+            return headerValue;
         }
 
         /// <summary>
@@ -84,7 +94,7 @@ namespace Digbyswift.Http.Extensions
                 ? referringUri
                 : null;
         }
-        
+
         /// <summary>
         /// Returns default if referrer is not the same host
         /// </summary>
@@ -101,7 +111,7 @@ namespace Digbyswift.Http.Extensions
         #endregion
 
         #region Request properties
-        
+
         public static bool IsGetMethod(this HttpRequest request)
         {
             return request.Method.Equals(HttpMethods.Get, StringComparison.OrdinalIgnoreCase);
@@ -129,14 +139,14 @@ namespace Digbyswift.Http.Extensions
 
             return request.Headers[NonStandardHeaderNames.XRequestedWith] == xRequestedWithValue;
         }
-        
+
         /// <summary>
         /// See: https://learn.microsoft.com/en-us/azure/frontdoor/front-door-http-headers-protocol
         /// </summary>
         public static IPAddress GetClientIp(this HttpRequest request)
         {
             string? clientIp = null;
-            
+
             var azureClientIpHeader = request.Headers[NonStandardHeaderNames.XAzureClientIp];
             if (azureClientIpHeader.Count > 0)
             {
@@ -150,7 +160,7 @@ namespace Digbyswift.Http.Extensions
                     clientIp = forwardedIpHeader[0];
                 }
             }
-            
+
             if (clientIp != null && IPAddress.TryParse(clientIp, out var ipAddress))
                 return ipAddress;
 
@@ -161,23 +171,37 @@ namespace Digbyswift.Http.Extensions
         {
             if (!request.HasUserAgent())
                 return null;
-            
+
             return request.Headers[HeaderNames.UserAgent];
         }
 
+        /// <summary>
+        /// Returns true if the useragent either has a non-whitespace useragent value, or contains a specific useragent. When
+        /// a specific useragent is supplied a match is true if the specific useragent is contained within the useragent value.
+        /// </summary>
         public static bool HasUserAgent(this HttpRequest request, string? specificUserAgent = null)
         {
-            if (!request.Headers.ContainsKey(HeaderNames.UserAgent))
+            if (!request.Headers.TryGetValue(HeaderNames.UserAgent, out var userAgentValue) || String.IsNullOrWhiteSpace(userAgentValue))
                 return false;
 
-            if (String.IsNullOrWhiteSpace(specificUserAgent))
-                return true;
-            
-            return request.Headers[HeaderNames.UserAgent].Contains(specificUserAgent, StringComparer.OrdinalIgnoreCase);
+            if (!String.IsNullOrWhiteSpace(specificUserAgent))
+                return userAgentValue.Contains(specificUserAgent, StringComparer.OrdinalIgnoreCase);
+
+            return true;
         }
-        
+
+        public static bool AcceptsWebP(this HttpRequest request)
+        {
+            var acceptHeaderKey = request.Headers.ContainsKey(NonStandardHeaderNames.XForwardedAccept)
+                ? NonStandardHeaderNames.XForwardedAccept
+                : HeaderNames.Accept;
+
+            var acceptValues = request.Headers[acceptHeaderKey];
+            return acceptValues.Count > 0 && (acceptValues[0]?.Contains(MimeTypeConstants.WebP) ?? false);
+        }
+
         #endregion
-        
+
         /// <summary>
         /// Returns the passed request decorated with any forwarded properties, specifically
         /// Request.Host and Request.Headers["Host"]. If the request has not been forwarded, the
@@ -194,15 +218,15 @@ namespace Digbyswift.Http.Extensions
         public static DomainInfo GetDomainInfo(this HttpRequest request)
         {
             const string domainInfoKey = "Digbyswift.Http.DomainInfo";
-            
+
             var domainParser = new DomainParser(new WebTldRuleProvider());
 
             if (request.HttpContext == null)
                 return domainParser.Parse(request.GetAbsoluteBaseUri());
-            
+
             if (request.HttpContext.Items[domainInfoKey] is DomainInfo domainInfo)
                 return domainInfo;
-            
+
             domainInfo = domainParser.Parse(request.GetAbsoluteBaseUri());
             request.HttpContext.Items[domainInfoKey] = domainInfo;
 
@@ -218,10 +242,10 @@ namespace Digbyswift.Http.Extensions
 
             if (String.IsNullOrWhiteSpace(request.Path))
                 throw new ArgumentException("Request has no path");
-            
+
             return Core.RegularExpressions.Regex.HasFileExtension.Value.IsMatch(request.Path);
         }
-        
+
         private static readonly string[] ImageExtensions = { ".png", ".jpg", ".jpeg" };
 
         public static bool IsPngOrJpeg(this HttpRequest request)
@@ -280,7 +304,7 @@ namespace Digbyswift.Http.Extensions
                 ? $"{pagePathWithoutQueryString}?{newQueryString}"
                 : pagePathWithoutQueryString;
         }
-        
+
         #endregion
     }
 }

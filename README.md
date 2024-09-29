@@ -30,6 +30,7 @@ A library of useful classes and HTTP-based extensions.
 
 #### Referrer
 - `HasReferrer()`
+- `GetReferrer()`
 - `GetSameHostReferrer(bool allowSubDomains = false)`
 - `GetSameHostReferrerOrDefault(bool allowSubDomains = false, string? defaultReferrer = null)`
 
@@ -42,6 +43,7 @@ A library of useful classes and HTTP-based extensions.
 - `GetUserAgent()`
 - `HasUserAgent(string? specificUserAgent = null)`
 - `GetDomainInfo()`
+- `AcceptsWebP`
 
 #### Paths
 - `PathHasExtension()`
@@ -55,6 +57,9 @@ A library of useful classes and HTTP-based extensions.
 
 ## HttpResponseMessage
 - `IsStatusCodeSuitableForRetry()`
+
+## HttpContent
+- `ReadAsJsonAsync<T>(JsonSerializerSettings? options = null)`
 
 ## PathString
 - `Segments()`
