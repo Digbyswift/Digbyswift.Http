@@ -9,8 +9,9 @@ namespace Digbyswift.Http;
 
 public class ForwardedHttpRequest : HttpRequest
 {
+    // ReSharper disable once InconsistentNaming
     private const string ForwardedHostHeaderName = "X-Forwarded-Host";
-    
+
     private readonly HttpRequest _httpRequest;
     public override HostString Host
     {
@@ -28,13 +29,13 @@ public class ForwardedHttpRequest : HttpRequest
             {
                 _httpRequest.Headers.Remove(ForwardedHostHeaderName);
             }
-            
+
             return _httpRequest.Headers;
         }
     }
 
     #region Decorated members
-    
+
     public override bool HasFormContentType => _httpRequest.HasFormContentType;
 
     public override string Method
@@ -54,20 +55,20 @@ public class ForwardedHttpRequest : HttpRequest
         get => _httpRequest.IsHttps;
         set => _httpRequest.IsHttps = value;
     }
-    
+
     public override PathString PathBase
     {
         get => _httpRequest.PathBase;
         set => _httpRequest.PathBase = value;
     }
 
-    public override PathString Path 
+    public override PathString Path
     {
         get => _httpRequest.Path;
         set => _httpRequest.Path = value;
     }
 
-    public override QueryString QueryString 
+    public override QueryString QueryString
     {
         get => _httpRequest.QueryString;
         set => _httpRequest.QueryString = value;
@@ -79,7 +80,7 @@ public class ForwardedHttpRequest : HttpRequest
         set => _httpRequest.Query = value;
     }
 
-    public override string Protocol 
+    public override string Protocol
     {
         get => _httpRequest.Protocol;
         set => _httpRequest.Protocol = value;
@@ -91,13 +92,13 @@ public class ForwardedHttpRequest : HttpRequest
         set => _httpRequest.Cookies = value;
     }
 
-    public override long? ContentLength 
+    public override long? ContentLength
     {
         get => _httpRequest.ContentLength;
         set => _httpRequest.ContentLength = value;
     }
 
-    public override string? ContentType 
+    public override string? ContentType
     {
         get => _httpRequest.ContentType;
         set => _httpRequest.ContentType = value;
@@ -109,13 +110,13 @@ public class ForwardedHttpRequest : HttpRequest
         set => _httpRequest.Body = value;
     }
 
-    public override IFormCollection Form 
+    public override IFormCollection Form
     {
         get => _httpRequest.Form;
         set => _httpRequest.Form = value;
     }
-    
-    public override Task<IFormCollection> ReadFormAsync(CancellationToken cancellationToken = new()) => _httpRequest.ReadFormAsync(cancellationToken);
+
+    public override Task<IFormCollection> ReadFormAsync(CancellationToken cancellationToken = default) => _httpRequest.ReadFormAsync(cancellationToken);
 
     #endregion
 
@@ -123,15 +124,14 @@ public class ForwardedHttpRequest : HttpRequest
     {
         _httpRequest = httpRequest;
     }
-    
-    private string GetHost()
+
+    private string? GetHost()
     {
         if (_httpRequest.Headers.TryGetValue(ForwardedHostHeaderName, out var forwardedHost) && !String.IsNullOrWhiteSpace(forwardedHost))
             return forwardedHost;
-        
+
         return _httpRequest.Host.HasValue
             ? _httpRequest.Host.Value
             : String.Empty;
-    } 
-    
+    }
 }

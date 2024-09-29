@@ -49,7 +49,7 @@ namespace Digbyswift.Http.Extensions
         #region Referrer
 
         /// <summary>
-        /// Returns true only if the Referrer header is present and there is a value
+        /// Returns true only if the Referrer header is present and there is a value.
         /// </summary>
         public static bool HasReferrer(this HttpRequest request)
         {
@@ -68,7 +68,7 @@ namespace Digbyswift.Http.Extensions
         }
 
         /// <summary>
-        /// Returns null if referrer is not the same host
+        /// Returns null if referrer is not the same host.
         /// </summary>
         public static Uri? GetSameHostReferrer(this HttpRequest request, bool allowSubDomains = false)
         {
@@ -89,14 +89,14 @@ namespace Digbyswift.Http.Extensions
             var currentDomainInfo = request.GetDomainInfo();
             var refererDomainInfo = referringUri.GetDomainInfo();
 
-            return currentDomainInfo.RegistrableDomain.Equals(refererDomainInfo.RegistrableDomain,
-                StringComparison.OrdinalIgnoreCase)
+            return currentDomainInfo.RegistrableDomain?.Equals(refererDomainInfo.RegistrableDomain,
+                StringComparison.OrdinalIgnoreCase) ?? false
                 ? referringUri
                 : null;
         }
 
         /// <summary>
-        /// Returns default if referrer is not the same host
+        /// Returns default if referrer is not the same host.
         /// </summary>
         public static Uri? GetSameHostReferrerOrDefault(this HttpRequest request, bool allowSubDomains = false, string? defaultReferrer = null)
         {
@@ -128,7 +128,7 @@ namespace Digbyswift.Http.Extensions
         }
 
         /// <summary>
-        /// Returns true if the request has the non-standard X-Requested-With header and the value, XMLHttpRequest
+        /// Returns true if the request has the non-standard X-Requested-With header and the value, XMLHttpRequest.
         /// </summary>
         public static bool IsAjaxRequest(this HttpRequest request)
         {
@@ -141,7 +141,7 @@ namespace Digbyswift.Http.Extensions
         }
 
         /// <summary>
-        /// See: https://learn.microsoft.com/en-us/azure/frontdoor/front-door-http-headers-protocol
+        /// See: https://learn.microsoft.com/en-us/azure/frontdoor/front-door-http-headers-protocol.
         /// </summary>
         public static IPAddress GetClientIp(this HttpRequest request)
         {
@@ -213,7 +213,7 @@ namespace Digbyswift.Http.Extensions
         }
 
         /// <summary>
-        /// Request-caches Nager.PublicPrefix.DomainParser
+        /// Request-caches Nager.PublicPrefix.DomainParser.
         /// </summary>
         public static DomainInfo GetDomainInfo(this HttpRequest request)
         {

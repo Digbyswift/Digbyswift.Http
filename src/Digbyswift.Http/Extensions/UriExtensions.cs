@@ -52,7 +52,5 @@ namespace Digbyswift.Http.Extensions
             var domainParser = new DomainParser(new WebTldRuleProvider());
             return domainParser.Parse(uri);
         }
-
-
     }
 }

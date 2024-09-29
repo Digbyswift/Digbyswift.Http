@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Digbyswift.Http.Extensions
 {
-
     public static class PathStringExtensions
     {
        public static IEnumerable<string> Segments(this PathString pathString)

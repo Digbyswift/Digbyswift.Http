@@ -21,7 +21,7 @@ public class RequestExtensionTests
         _sut.Scheme = "http";
         _sut.Host = new HostString("localhost");
     }
-    
+
     #region PathHasExtension
 
     [TestCase("/.x")]
@@ -38,7 +38,7 @@ public class RequestExtensionTests
     {
         // Arrange
         _sut.Path = new PathString(path);
-        
+
         // Act
         var result = _sut.PathHasExtension();
 
@@ -61,14 +61,13 @@ public class RequestExtensionTests
     {
         // Arrange
         _sut.Path = new PathString(path);
-        
+
         // Act
         var result = _sut.PathHasExtension();
 
         // Assert
         Assert.That(result, Is.False);
     }
-    
+
     #endregion
-    
 }

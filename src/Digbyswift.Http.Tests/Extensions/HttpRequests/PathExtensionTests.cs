@@ -21,7 +21,7 @@ public class PathExtensionTests
         _sut.Scheme = "http";
         _sut.Host = new HostString("localhost");
     }
-    
+
     #region IsPngOrJpeg
 
     [TestCase("/0.jpg")]
@@ -41,14 +41,14 @@ public class PathExtensionTests
     {
         // Arrange
         _sut.Path = new PathString(path);
-        
+
         // Act
         var result = _sut.IsPngOrJpeg();
 
         // Assert
         Assert.That(result, Is.True);
     }
-    
+
     [TestCase("/0.jpeg")]
     [TestCase("/0.JPEG")]
     [TestCase("/0.Jpeg")]
@@ -59,14 +59,14 @@ public class PathExtensionTests
     {
         // Arrange
         _sut.Path = new PathString(path);
-        
+
         // Act
         var result = _sut.IsPngOrJpeg();
 
         // Assert
         Assert.That(result, Is.True);
     }
-    
+
     [TestCase("/0.png")]
     [TestCase("/0.PNG")]
     [TestCase("/0.Png")]
@@ -77,14 +77,14 @@ public class PathExtensionTests
     {
         // Arrange
         _sut.Path = new PathString(path);
-        
+
         // Act
         var result = _sut.IsPngOrJpeg();
 
         // Assert
         Assert.That(result, Is.True);
     }
-    
+
     [TestCase("/.png")]
     [TestCase("/.PNG")]
     [TestCase("/0.png")]
@@ -97,7 +97,6 @@ public class PathExtensionTests
     {
         // Arrange
         _sut.Path = new PathString(path);
-        _sut.QueryString = new QueryString();
         _sut.QueryString.Add("test", "true");
 
         // Act
@@ -106,7 +105,7 @@ public class PathExtensionTests
         // Assert
         Assert.That(result, Is.True);
     }
-    
+
     [TestCase("/.x")]
     [TestCase("/.X")]
     [TestCase("/.pong")]
@@ -120,14 +119,13 @@ public class PathExtensionTests
     {
         // Arrange
         _sut.Path = new PathString(path);
-        
+
         // Act
         var result = _sut.IsPngOrJpeg();
 
         // Assert
         Assert.That(result, Is.False);
     }
-    
+
     #endregion
-    
 }

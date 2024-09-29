@@ -7,12 +7,13 @@ namespace Digbyswift.Http.Extensions
 {
     public static class HttpResponseMessageExtensions
     {
-        public static readonly HttpStatusCode[] RetryStatusCodes = {
+        public static readonly HttpStatusCode[] RetryStatusCodes =
+        {
             HttpStatusCode.Unauthorized, // 401
             HttpStatusCode.Forbidden, // 403
             HttpStatusCode.RequestTimeout, // 408
-#if NETSTANDARD2_0            
-			(HttpStatusCode)429, // 429
+#if NETSTANDARD2_0
+            (HttpStatusCode)429, // 429
 #else
             HttpStatusCode.TooManyRequests, // 429
 #endif
@@ -29,6 +30,5 @@ namespace Digbyswift.Http.Extensions
 
             return RetryStatusCodes.Contains(message.StatusCode);
         }
-
     }
 }
