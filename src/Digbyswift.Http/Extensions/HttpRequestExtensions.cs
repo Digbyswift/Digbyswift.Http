@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using Digbyswift.Core.Constants;
+using Digbyswift.Core.Extensions;
 using Digbyswift.Http.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
@@ -57,9 +58,23 @@ public static class HttpRequestExtensions
     }
 
     /// <summary>
+    /// Returns the Referrer header value as a Uri if present, valid and not whitespace, otherwise null.
+    /// </summary>
+    public static Uri? GetReferrer(this HttpRequest request)
+    {
+        if (!request.Headers.TryGetValue(HeaderNames.Referer, out var headerValue) || String.IsNullOrWhiteSpace(headerValue))
+            return null;
+
+        if (!Uri.TryCreate(headerValue, UriKind.RelativeOrAbsolute, out var referringUri))
+            return null;
+
+        return referringUri;
+    }
+
+    /// <summary>
     /// Returns the Referrer header value if present and not whitespace, otherwise null.
     /// </summary>
-    public static string? GetReferrer(this HttpRequest request)
+    public static string? GetRawReferrer(this HttpRequest request)
     {
         if (!request.Headers.TryGetValue(HeaderNames.Referer, out var headerValue) || String.IsNullOrWhiteSpace(headerValue))
             return null;
@@ -114,17 +129,17 @@ public static class HttpRequestExtensions
 
     public static bool IsGetMethod(this HttpRequest request)
     {
-        return request.Method.Equals(HttpMethods.Get, StringComparison.OrdinalIgnoreCase);
+        return request.Method.EqualsIgnoreCase(HttpMethods.Get);
     }
 
     public static bool IsHeadMethod(this HttpRequest request)
     {
-        return request.Method.Equals(HttpMethods.Head, StringComparison.OrdinalIgnoreCase);
+        return request.Method.EqualsIgnoreCase(HttpMethods.Head);
     }
 
     public static bool IsPostMethod(this HttpRequest request)
     {
-        return request.Method.Equals(HttpMethods.Post, StringComparison.OrdinalIgnoreCase);
+        return request.Method.EqualsIgnoreCase(HttpMethods.Post);
     }
 
     /// <summary>
@@ -137,13 +152,16 @@ public static class HttpRequestExtensions
 
         const string xRequestedWithValue = "XMLHttpRequest";
 
-        return request.Headers[NonStandardHeaderNames.XRequestedWith] == xRequestedWithValue;
+        if (!request.Headers.TryGetValue(NonStandardHeaderNames.XRequestedWith, out var headerValue) || String.IsNullOrWhiteSpace(headerValue))
+            return false;
+
+        return headerValue.ToString().EqualsIgnoreCase(xRequestedWithValue);
     }
 
     /// <summary>
     /// See: https://learn.microsoft.com/en-us/azure/frontdoor/front-door-http-headers-protocol.
     /// </summary>
-    public static IPAddress GetClientIp(this HttpRequest request)
+    public static IPAddress? GetClientIp(this HttpRequest request)
     {
         string? clientIp = null;
 
