@@ -31,6 +31,7 @@ A library of useful classes and HTTP-based extensions.
 #### Referrer
 - `HasReferrer()`
 - `GetReferrer()`
+- `GetRawReferrer()`
 - `GetSameHostReferrer(bool allowSubDomains = false)`
 - `GetSameHostReferrerOrDefault(bool allowSubDomains = false, string? defaultReferrer = null)`
 
