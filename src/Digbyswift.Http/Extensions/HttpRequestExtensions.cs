@@ -83,6 +83,20 @@ public static class HttpRequestExtensions
     }
 
     /// <summary>
+    /// Returns true if the Referrer header value as a Uri if present, valid and not whitespace, otherwise false.
+    /// </summary>
+    public static bool TryGetReferrer(this HttpRequest request, out Uri? referringUri)
+    {
+        if (!request.Headers.TryGetValue(HeaderNames.Referer, out var headerValue) || String.IsNullOrWhiteSpace(headerValue))
+        {
+            referringUri = null;
+            return false;
+        }
+
+        return Uri.TryCreate(headerValue, UriKind.RelativeOrAbsolute, out referringUri);
+    }
+
+    /// <summary>
     /// Returns null if referrer is not the same host.
     /// </summary>
     public static Uri? GetSameHostReferrer(this HttpRequest request, bool allowSubDomains = false)
@@ -108,6 +122,12 @@ public static class HttpRequestExtensions
             StringComparison.OrdinalIgnoreCase) ?? false
             ? referringUri
             : null;
+    }
+
+    public static bool TryGetSameHostReferrer(this HttpRequest request, out Uri? referringUri)
+    {
+        referringUri = GetSameHostReferrer(request);
+        return (referringUri != null);
     }
 
     /// <summary>
@@ -314,6 +334,32 @@ public static class HttpRequestExtensions
 
         // this removes the key if exists
         newQueryString.Remove(excludeKey);
+
+        // this gets the page path from root without QueryString
+        var pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
+
+        return newQueryString.Count > 0
+            ? $"{pagePathWithoutQueryString}?{newQueryString}"
+            : pagePathWithoutQueryString;
+    }
+
+    public static string PathAndQueryWithoutKeys(this HttpRequest request, params string[] excludeKeys)
+    {
+        if (request == null)
+            throw new ArgumentNullException(nameof(request));
+
+        var uri = request.GetAbsoluteUri();
+
+        if (excludeKeys.Length == 0)
+            return uri.ToString();
+
+        // this gets all the query string key value pairs as a collection
+        var newQueryString = HttpUtility.ParseQueryString(uri.Query);
+
+        foreach (var key in excludeKeys)
+        {
+            newQueryString.Remove(key);
+        }
 
         // this gets the page path from root without QueryString
         var pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);

@@ -34,6 +34,8 @@ A library of useful classes and HTTP-based extensions.
 - `GetRawReferrer()`
 - `GetSameHostReferrer(bool allowSubDomains = false)`
 - `GetSameHostReferrerOrDefault(bool allowSubDomains = false, string? defaultReferrer = null)`
+- `TryGetReferrer()`
+- `TryGetSameHostReferrer()`
 
 #### Properties
 - `IsGetMethod()`
@@ -52,6 +54,7 @@ A library of useful classes and HTTP-based extensions.
 - `IsSvg()`
 - `PathAndQueryReplaceKey(string replaceKey, object value)`
 - `PathAndQueryWithoutKey(string excludeKey)`
+- `PathAndQueryWithoutKeys(string[] excludeKeys)`
 
 ## HttpResponse
 - `SetNoCacheHeaders()`

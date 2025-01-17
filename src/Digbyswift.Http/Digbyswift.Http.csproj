@@ -6,9 +6,9 @@
         <PackageProjectUrl>https://github.com/digbyswift/Digbyswift.Http</PackageProjectUrl>
         <RepositoryUrl>https://github.com/digbyswift/Digbyswift.Http</RepositoryUrl>
         <PackageTags>c# http utility extensions</PackageTags>
-        <AssemblyVersion>1.4.0</AssemblyVersion>
-        <PackageVersion>1.4.0</PackageVersion>
-        <FileVersion>1.4.0</FileVersion>
+        <AssemblyVersion>1.5.0</AssemblyVersion>
+        <PackageVersion>1.5.0</PackageVersion>
+        <FileVersion>1.5.0</FileVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
