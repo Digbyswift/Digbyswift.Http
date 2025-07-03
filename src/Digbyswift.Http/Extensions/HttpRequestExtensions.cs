@@ -369,11 +369,10 @@ public static class HttpRequestExtensions
             : pagePathWithoutQueryString;
     }
 
-    public static string PathAndQueryOnly(this HttpRequest request, string key, string? defaultValue)
+    public static string QueryOnly(this HttpRequest request, string queryKey)
     {
-        return request.Query.TryGetValue(key, out var value)
-        ? $"?{key}={value}"
-        : !String.IsNullOrWhiteSpace(defaultValue) ? $"?{key}={defaultValue}" : String.Empty;
+        return request.Query.TryGetValue(queryKey, out var value)
+        ? $"?{queryKey}={value}" : String.Empty;
     }
 
     #endregion
