@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using Digbyswift.Extensions.Http.Tests.MockObjects;
 using Digbyswift.Http.Extensions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 namespace Digbyswift.Extensions.Http.Tests.Extensions.HttpRequests;
 
@@ -72,6 +75,45 @@ public class RequestExtensionTests
 
         // Assert
         Assert.That(result, Is.False);
+    }
+
+    [TestCase("A", "A", "5")]
+    [TestCase("a", "a", "5")]
+    [TestCase("ab", "ab", "5")]
+    public void QueryOnly_ReturnsCorrectString_WhenQueryHasKey(string query, string key, string queryValue)
+    {
+        // Arrange
+        var dictionary = new Dictionary<string, StringValues>()
+        {
+            { query, queryValue }
+        };
+        _sut.Query = new QueryCollection(dictionary);
+
+        // Act
+        var result = _sut.QueryOnly(key);
+
+        // Assert
+        var returnQuery = $"?{query}={queryValue}";
+        ClassicAssert.AreEqual(result, returnQuery);
+    }
+
+    [TestCase("A", "B", "5")]
+    [TestCase("a", "b", "5")]
+    [TestCase("ab", "ba", "5")]
+    public void QueryOnly_ReturnsEmptyString_WhenQueryHasNoKeyAndNoDefault(string query, string key, string queryValue)
+    {
+        // Arrange
+        var dictionary = new Dictionary<string, StringValues>()
+        {
+            { query, queryValue }
+        };
+        _sut.Query = new QueryCollection(dictionary);
+
+        // Act
+        var result = _sut.QueryOnly(key);
+
+        // Assert
+        ClassicAssert.AreEqual(result, String.Empty);
     }
 
     #endregion

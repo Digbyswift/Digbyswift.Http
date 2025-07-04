@@ -62,10 +62,7 @@ public static class HttpRequestExtensions
     /// </summary>
     public static Uri? GetReferrer(this HttpRequest request)
     {
-        if (!request.Headers.TryGetValue(HeaderNames.Referer, out var headerValue) || String.IsNullOrWhiteSpace(headerValue))
-            return null;
-
-        if (!Uri.TryCreate(headerValue, UriKind.Absolute, out var referringUri))
+        if (!request.TryGetReferrer(out var referringUri) || referringUri is null)
             return null;
 
         return referringUri;
@@ -93,7 +90,7 @@ public static class HttpRequestExtensions
             return false;
         }
 
-        return Uri.TryCreate(headerValue, UriKind.RelativeOrAbsolute, out referringUri);
+        return Uri.TryCreate(headerValue, UriKind.Absolute, out referringUri);
     }
 
     /// <summary>
@@ -101,12 +98,7 @@ public static class HttpRequestExtensions
     /// </summary>
     public static Uri? GetSameHostReferrer(this HttpRequest request, bool allowSubDomains = false)
     {
-        var referrerValue = request.Headers[HeaderNames.Referer];
-        if (referrerValue.Count == 0)
-            return null;
-
-        var referrer = referrerValue[0];
-        if (referrer == null || !Uri.TryCreate(referrer, UriKind.RelativeOrAbsolute, out var referringUri))
+        if (!request.TryGetReferrer(out var referringUri) || referringUri is null)
             return null;
 
         if (request.GetAbsoluteBaseUri().IsBaseOf(referringUri))
@@ -369,11 +361,11 @@ public static class HttpRequestExtensions
             : pagePathWithoutQueryString;
     }
 
-    public static string PathAndQueryOnly(this HttpRequest request, string key, string? defaultValue)
+    public static string PathAndQueryWithOnlyKey(this HttpRequest request, string queryKey, string? defaultValue = null)
     {
-        return request.Query.TryGetValue(key, out var value)
-        ? $"?{key}={value}"
-        : !String.IsNullOrWhiteSpace(defaultValue) ? $"?{key}={defaultValue}" : String.Empty;
+        return request.Query.TryGetValue(queryKey, out var value) && !String.IsNullOrWhiteSpace(value)
+            ? $"?{queryKey}={value}"
+            : $"?{queryKey}={defaultValue}";
     }
 
     #endregion
