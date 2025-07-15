@@ -1,7 +1,7 @@
 # Digbyswift.Http
 
 [![NuGet version (Digbyswift.Http)](https://img.shields.io/nuget/v/Digbyswift.Http.svg)](https://www.nuget.org/packages/Digbyswift.Http/)
-![Build status](https://dev.azure.com/digbyswift/Digbyswift%20-%20OSS%20Packages/_apis/build/status/Build%20Digbyswift.Http)
+[![Build and publish package](https://github.com/Digbyswift/Digbyswift.Http/actions/workflows/dotnet-build-publish.yml/badge.svg)](https://github.com/Digbyswift/Digbyswift.Http/actions/workflows/dotnet-build-publish.yml)
 
 A library of useful classes and HTTP-based extensions.
 
