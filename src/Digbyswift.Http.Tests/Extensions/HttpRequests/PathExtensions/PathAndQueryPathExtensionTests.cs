@@ -267,4 +267,59 @@ public class PathAndQueryPathExtensionTests
     }
 
     #endregion
+
+    #region PathAndQueryWithoutKeys
+
+    [Test]
+    [Ignore("In progress")]
+    public void QueryOrDefault_ThrowsArgumentNullException_IfRequestIsNull()
+    {
+        // Arrange
+        HttpRequest request = null;
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => request.QueryOrDefault(string.Empty, String.Empty));
+    }
+
+    [Test]
+    [Ignore("In progress")]
+    public void QueryOrDefault_ReturnsQuerystring_IfKeyIsFound()
+    {
+        // Arrange
+        const string originalPath = "/testing/";
+        const string expectedResult = "?test=testquery";
+        const string keyToFind = "test";
+
+        _sut.Path = new PathString(originalPath);
+
+        // Act
+        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToFind, "testquery"));
+
+        var result = _sut.QueryOrDefault(keyToFind, string.Empty);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(expectedResult));
+    }
+
+    [Test]
+    [Ignore("In progress")]
+    public void QueryOrDefault_ReturnsFallBackQuerystring_IfKeyIsNotFound()
+    {
+        // Arrange
+        const string originalPath = "/testing/";
+        const string expectedResult = "?test=testquery";
+        const string keyToFind = "test";
+
+        _sut.Path = new PathString(originalPath);
+
+        // Act
+        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToFind, "testquery"));
+
+        var result = _sut.QueryOrDefault(keyToFind, string.Empty);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(expectedResult));
+    }
+
+    #endregion
 }

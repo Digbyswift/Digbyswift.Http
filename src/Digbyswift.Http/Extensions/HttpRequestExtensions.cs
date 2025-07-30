@@ -339,7 +339,11 @@ public static class HttpRequestExtensions
         // this gets all the query string key value pairs as a collection
         var newQueryString = HttpUtility.ParseQueryString(request.QueryString.ToString());
         if (!newQueryString.AllKeys.ContainsIgnoreCase(excludeKey))
-            return request.Path;
+        {
+            return newQueryString.Count > 0
+                ? $"{request.Path}?{newQueryString}"
+                : request.Path;
+        }
 
         // this removes the key if exists
         newQueryString.Remove(excludeKey);
@@ -373,8 +377,10 @@ public static class HttpRequestExtensions
             : request.Path;
     }
 
-    public static string PathAndQueryOnly(this HttpRequest request, string key, string? defaultValue)
+    public static string QueryOrDefault(this HttpRequest request, string key, string? defaultValue)
     {
+        var testing = request.Query.TryGetValue(key, out var test);
+
         return request.Query.TryGetValue(key, out var value)
         ? $"?{key}={value}"
         : !String.IsNullOrWhiteSpace(defaultValue)
