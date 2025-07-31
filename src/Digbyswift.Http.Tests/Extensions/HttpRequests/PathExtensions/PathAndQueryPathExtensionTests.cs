@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using Digbyswift.Http.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -21,31 +22,29 @@ public class PathAndQueryPathExtensionTests
         _sut.Method = HttpMethod.Get.Method;
         _sut.Scheme = "http";
         _sut.Host = new HostString("localhost");
+        _sut.Path = new PathString("/testing/");
     }
 
     #region PathAndQueryReplaceValueOfKey
 
     [Test]
-    public void PathAndQueryReplaceValueOfKey_ThrowsArgumentNullException_IfRequestIsNull()
+    public void PathAndQueryReplaceValueOfKey_ThrowsArgumentNullException_WhenRequestIsNull()
     {
         // Arrange
         HttpRequest request = null;
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => request.PathAndQueryReplaceValueOfKey(string.Empty, string.Empty));
+        Assert.Throws<ArgumentNullException>(() => request.PathAndQueryReplaceValueOfKey(String.Empty, String.Empty));
     }
 
     [Test]
-    public void PathAndQueryReplaceValueOfKey_ReturnsEmptyQuerystring_IfValueObjectIsNull()
+    public void PathAndQueryReplaceValueOfKey_ReturnsEmptyQuerystring_WhenValueObjectIsNull()
     {
         // Arrange
-        const string originalPath = "/testing/";
         const string expectedResult = "/testing/";
 
-        _sut.Path = new PathString(originalPath);
-
         // Act
-        var result = _sut.PathAndQueryReplaceValueOfKey(string.Empty, null);
+        var result = _sut.PathAndQueryReplaceValueOfKey(String.Empty, null);
 
         // Assert
         Assert.That(result, Is.EqualTo(expectedResult));
@@ -55,14 +54,10 @@ public class PathAndQueryPathExtensionTests
     [TestCase(100.00d, "/testing/?test=100")]
     [TestCase(100.01d, "/testing/?test=100.01")]
     [TestCase(true, "/testing/?test=True")]
-    public void PathAndQueryReplaceValueOfKey_ReturnsQuerystring_IfValueObjectCanBeParsedToString(object value, string expectedResult)
+    public void PathAndQueryReplaceValueOfKey_ReturnsReplacedQuerystring_WhenValueIsStringified(object value, string expectedResult)
     {
         // Arrange
-        const string originalPath = "/testing/";
         const string key = "test";
-
-        _sut.Path = new PathString(originalPath);
-        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(key, value.ToString()));
 
         // Act
         var result = _sut.PathAndQueryReplaceValueOfKey(key, value);
@@ -71,16 +66,26 @@ public class PathAndQueryPathExtensionTests
         Assert.That(result, Is.EqualTo(expectedResult));
     }
 
+    [TestCaseSource(nameof(GuidTestCases))]
+    public void PathAndQueryReplaceValueOfKey_ReturnsReplacedQuerystring_WhenValueIsStringified(GuidTestData testData)
+    {
+        // Arrange
+        const string key = "test";
+
+        // Act
+        var result = _sut.PathAndQueryReplaceValueOfKey(key, testData.Source);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(testData.ExpectedResult));
+    }
+
     [TestCase("/testing")]
     [TestCase("/testing/")]
     [TestCase("/testing-again/")]
-    public void PathAndQueryReplaceValueOfKey_ReturnsOriginalPath_WhenKeyIsEmpty_AndRequestHasNoQuerystring(string path)
+    public void PathAndQueryReplaceValueOfKey_ReturnsOriginalPath_WhenKeyIsEmpty(string path)
     {
-        // Arrange
-        _sut.Path = new PathString(path);
-
-        // Act
-        var result = _sut.PathAndQueryReplaceValueOfKey(string.Empty, string.Empty);
+        // Arrange & Act
+        var result = _sut.PathAndQueryReplaceValueOfKey(String.Empty, String.Empty);
 
         // Assert
         Assert.That(result, Is.EqualTo(path));
@@ -97,7 +102,7 @@ public class PathAndQueryPathExtensionTests
         _sut.Path = new PathString(path);
 
         // Act
-        var result = _sut.PathAndQueryReplaceValueOfKey(nonMatchedKey, string.Empty);
+        var result = _sut.PathAndQueryReplaceValueOfKey(nonMatchedKey, String.Empty);
 
         // Assert
         Assert.That(result, Is.EqualTo(path));
@@ -118,14 +123,14 @@ public class PathAndQueryPathExtensionTests
         _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToReplaceValueFor, replacementValue));
 
         // Act
-        var result = _sut.PathAndQueryReplaceValueOfKey(nonMatchedKey, string.Empty);
+        var result = _sut.PathAndQueryReplaceValueOfKey(nonMatchedKey, String.Empty);
 
         // Assert
         Assert.That(result, Is.EqualTo(expectedPath));
     }
 
     [Test]
-    public void PathAndQueryReplaceValueOfKey_ReturnsPathAndQuery_WithValueOfKeyReplaced()
+    public void PathAndQueryReplaceValueOfKey_ReturnsReplacementValue_WhenKeyIsMatched()
     {
         // Arrange
         const string originalPath = "/testing/";
@@ -145,7 +150,7 @@ public class PathAndQueryPathExtensionTests
     }
 
     [Test]
-    public void PathAndQueryReplaceValueOfKey_ReturnsPathAndQuery_WithMultipleValuesOfSameKeyReplaced()
+    public void PathAndQueryReplaceValueOfKey_ReturnsReplacementValue_WhenMultipleKeyMatchesArePresent()
     {
         // Arrange
         const string originalPath = "/testing/";
@@ -170,17 +175,17 @@ public class PathAndQueryPathExtensionTests
     #region PathAndQueryWithoutKey
 
     [Test]
-    public void PathAndQueryWithoutKey_ThrowsArgumentNullException_IfRequestIsNull()
+    public void PathAndQueryWithoutKey_ThrowsArgumentNullException_WhenRequestIsNull()
     {
         // Arrange
         HttpRequest request = null;
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => request.PathAndQueryWithoutKey(string.Empty));
+        Assert.Throws<ArgumentNullException>(() => request.PathAndQueryWithoutKey(String.Empty));
     }
 
     [Test]
-    public void PathAndQueryWithoutKey_ReturnsOriginalPath_WhenKeyIsNotPresent_AndRequestHasQueryString()
+    public void PathAndQueryWithoutKey_ReturnsOriginalPath_WhenKeyIsNotPresent()
     {
         // Arrange
         const string originalPath = "/testing/";
@@ -199,7 +204,7 @@ public class PathAndQueryPathExtensionTests
     }
 
     [Test]
-    public void PathAndQueryWithoutKey_ReturnsOriginalPath_WhenKeyIsNotPresent_AndRequestDoesNotHaveQueryString()
+    public void PathAndQueryWithoutKey_ReturnsOriginalPath_WhenKeyAndQueryIsNotPresent()
     {
         // Arrange
         const string originalPath = "/testing/";
@@ -220,17 +225,17 @@ public class PathAndQueryPathExtensionTests
     #region PathAndQueryWithoutKeys
 
     [Test]
-    public void PathAndQueryWithoutKeys_ThrowsArgumentNullException_IfRequestIsNull()
+    public void PathAndQueryWithoutKeys_ThrowsArgumentNullException_WhenRequestIsNull()
     {
         // Arrange
         HttpRequest request = null;
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => request.PathAndQueryWithoutKeys(string.Empty));
+        Assert.Throws<ArgumentNullException>(() => request.PathAndQueryWithoutKeys(String.Empty));
     }
 
     [Test]
-    public void PathAndQueryWithoutKeys_ReturnsOriginalPath_WhenKeysAreNotPresent_AndRequestHasQueryString()
+    public void PathAndQueryWithoutKeys_ReturnsOriginalPath_WhenKeysAreNotPresent()
     {
         // Arrange
         const string originalPath = "/testing/";
@@ -250,7 +255,7 @@ public class PathAndQueryPathExtensionTests
     }
 
     [Test]
-    public void PathAndQueryWithoutKeys_ReturnsOriginalPath_WhenKeysAreNotPresent_AndRequestDoesNotHaveQueryString()
+    public void PathAndQueryWithoutKeys_ReturnsOriginalPath_WhenKeysAndQueryAreNotPresent()
     {
         // Arrange
         const string originalPath = "/testing/";
@@ -271,19 +276,18 @@ public class PathAndQueryPathExtensionTests
     #region PathAndQueryWithoutKeys
 
     [Test]
-    [Ignore("In progress")]
-    public void QueryOrDefault_ThrowsArgumentNullException_IfRequestIsNull()
+    public void QueryOrDefault_ThrowsArgumentNullException_WhenRequestIsNull()
     {
         // Arrange
         HttpRequest request = null;
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => request.QueryOrDefault(string.Empty, String.Empty));
+        Assert.Throws<ArgumentNullException>(() => request.QueryOrDefault(String.Empty, String.Empty));
     }
 
     [Test]
     [Ignore("In progress")]
-    public void QueryOrDefault_ReturnsQuerystring_IfKeyIsFound()
+    public void QueryOrDefault_ReturnsQuerystring_WhenKeyIsMatched()
     {
         // Arrange
         const string originalPath = "/testing/";
@@ -303,23 +307,35 @@ public class PathAndQueryPathExtensionTests
 
     [Test]
     [Ignore("In progress")]
-    public void QueryOrDefault_ReturnsFallBackQuerystring_IfKeyIsNotFound()
+    public void QueryOrDefault_ReturnsFallBackQuerystring_WhenKeyIsNotMatched()
     {
         // Arrange
-        const string originalPath = "/testing/";
-        const string expectedResult = "?test=testquery";
         const string keyToFind = "test";
+        const string keyValue = "testquery";
+        const string expectedResult = $"?{keyToFind}={keyValue}";
 
-        _sut.Path = new PathString(originalPath);
+        _sut.Path = new PathString("/testing/");
 
         // Act
-        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToFind, "testquery"));
+        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToFind, keyValue));
 
-        var result = _sut.QueryOrDefault(keyToFind, string.Empty);
+        var result = _sut.QueryOrDefault(keyToFind, String.Empty);
 
         // Assert
         Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     #endregion
+
+    private static IEnumerable<GuidTestData> GuidTestCases()
+    {
+        yield return new GuidTestData(Guid.NewGuid(), String.Empty);
+        yield return new GuidTestData(new Guid("c73e70c0-8cc1-42f9-82d1-bef160557267"), String.Empty);
+    }
+
+    public class GuidTestData(Guid source, string expectedResult)
+    {
+        public Guid Source { get; } = source;
+        public string ExpectedResult { get; } = expectedResult;
+    }
 }
