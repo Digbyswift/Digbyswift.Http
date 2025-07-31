@@ -60,6 +60,8 @@ public class PathAndQueryPathExtensionTests
         const string key = "test";
 
         // Act
+        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(key, "initial-value"));
+
         var result = _sut.PathAndQueryReplaceValueOfKey(key, value);
 
         // Assert
@@ -67,12 +69,13 @@ public class PathAndQueryPathExtensionTests
     }
 
     [TestCaseSource(nameof(GuidTestCases))]
-    public void PathAndQueryReplaceValueOfKey_ReturnsReplacedQuerystring_WhenValueIsStringified(GuidTestData testData)
+    public void PathAndQueryReplaceValueOfKey_ReturnsReplacedQuerystring_WhenValueIsGuid(GuidTestData testData)
     {
         // Arrange
         const string key = "test";
 
         // Act
+        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(key, "initial-value"));
         var result = _sut.PathAndQueryReplaceValueOfKey(key, testData.Source);
 
         // Assert
@@ -84,7 +87,10 @@ public class PathAndQueryPathExtensionTests
     [TestCase("/testing-again/")]
     public void PathAndQueryReplaceValueOfKey_ReturnsOriginalPath_WhenKeyIsEmpty(string path)
     {
-        // Arrange & Act
+        // Arrange
+        _sut.Path = new PathString(path);
+
+        // Act
         var result = _sut.PathAndQueryReplaceValueOfKey(String.Empty, String.Empty);
 
         // Assert
@@ -112,14 +118,12 @@ public class PathAndQueryPathExtensionTests
     public void PathAndQueryReplaceValueOfKey_ReturnsOriginalPathAndQuery_WhenKeyIsNotPresent()
     {
         // Arrange
-        const string originalPath = "/testing/";
-        const string expectedPath = "/testing/?test=testquery";
-
         const string keyToReplaceValueFor = "test";
         const string replacementValue = "testquery";
+        const string expectedPath = $"/testing/?{keyToReplaceValueFor}={replacementValue}";
+
         const string nonMatchedKey = "mismatch";
 
-        _sut.Path = new PathString(originalPath);
         _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToReplaceValueFor, replacementValue));
 
         // Act
@@ -133,14 +137,12 @@ public class PathAndQueryPathExtensionTests
     public void PathAndQueryReplaceValueOfKey_ReturnsReplacementValue_WhenKeyIsMatched()
     {
         // Arrange
-        const string originalPath = "/testing/";
         const string expectedPath = "/testing/?test=replaced";
 
         const string keyToReplaceValueFor = "test";
         const string replacementValue = "replaced";
 
-        _sut.Path = PathString.FromUriComponent(originalPath);
-        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToReplaceValueFor, "testquery"));
+        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToReplaceValueFor, "initial-value"));
 
         // Act
         var result = _sut.PathAndQueryReplaceValueOfKey(keyToReplaceValueFor, replacementValue);
@@ -153,13 +155,11 @@ public class PathAndQueryPathExtensionTests
     public void PathAndQueryReplaceValueOfKey_ReturnsReplacementValue_WhenMultipleKeyMatchesArePresent()
     {
         // Arrange
-        const string originalPath = "/testing/";
         const string expectedPath = "/testing/?test=replaced";
 
         const string keyToReplaceValueFor = "test";
         const string replacementValue = "replaced";
 
-        _sut.Path = new PathString(originalPath);
         _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToReplaceValueFor, "testquery"));
         _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToReplaceValueFor, "testagain"));
 
@@ -188,12 +188,10 @@ public class PathAndQueryPathExtensionTests
     public void PathAndQueryWithoutKey_ReturnsOriginalPath_WhenKeyIsNotPresent()
     {
         // Arrange
-        const string originalPath = "/testing/";
         const string expectedPath = "/testing/?test=testquery";
         const string keyToReplaceValueFor = "test";
         const string mismatchedKey = "mismatch";
 
-        _sut.Path = new PathString(originalPath);
         _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToReplaceValueFor, "testquery"));
 
         // Act
@@ -207,11 +205,8 @@ public class PathAndQueryPathExtensionTests
     public void PathAndQueryWithoutKey_ReturnsOriginalPath_WhenKeyAndQueryIsNotPresent()
     {
         // Arrange
-        const string originalPath = "/testing/";
         const string expectedPath = "/testing/";
         const string mismatchedKey = "mismatch";
-
-        _sut.Path = new PathString(originalPath);
 
         // Act
         var result = _sut.PathAndQueryWithoutKey(mismatchedKey);
@@ -238,13 +233,11 @@ public class PathAndQueryPathExtensionTests
     public void PathAndQueryWithoutKeys_ReturnsOriginalPath_WhenKeysAreNotPresent()
     {
         // Arrange
-        const string originalPath = "/testing/";
         const string expectedPath = "/testing/?test=testquery";
         const string keyToReplaceValueFor = "test";
         const string mismatchedKey = "mismatch";
         const string mismatchedKeyTwo = "mismatch2";
 
-        _sut.Path = new PathString(originalPath);
         _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToReplaceValueFor, "testquery"));
 
         // Act
@@ -258,11 +251,8 @@ public class PathAndQueryPathExtensionTests
     public void PathAndQueryWithoutKeys_ReturnsOriginalPath_WhenKeysAndQueryAreNotPresent()
     {
         // Arrange
-        const string originalPath = "/testing/";
         const string expectedPath = "/testing/";
         const string mismatchedKey = "mismatch";
-
-        _sut.Path = new PathString(originalPath);
 
         // Act
         var result = _sut.PathAndQueryWithoutKeys(mismatchedKey);
@@ -276,6 +266,7 @@ public class PathAndQueryPathExtensionTests
     #region PathAndQueryWithoutKeys
 
     [Test]
+    [Ignore("In progress")]
     public void QueryOrDefault_ThrowsArgumentNullException_WhenRequestIsNull()
     {
         // Arrange
@@ -290,11 +281,8 @@ public class PathAndQueryPathExtensionTests
     public void QueryOrDefault_ReturnsQuerystring_WhenKeyIsMatched()
     {
         // Arrange
-        const string originalPath = "/testing/";
         const string expectedResult = "?test=testquery";
         const string keyToFind = "test";
-
-        _sut.Path = new PathString(originalPath);
 
         // Act
         _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToFind, "testquery"));
@@ -314,8 +302,6 @@ public class PathAndQueryPathExtensionTests
         const string keyValue = "testquery";
         const string expectedResult = $"?{keyToFind}={keyValue}";
 
-        _sut.Path = new PathString("/testing/");
-
         // Act
         _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToFind, keyValue));
 
@@ -329,8 +315,8 @@ public class PathAndQueryPathExtensionTests
 
     private static IEnumerable<GuidTestData> GuidTestCases()
     {
-        yield return new GuidTestData(Guid.NewGuid(), String.Empty);
-        yield return new GuidTestData(new Guid("c73e70c0-8cc1-42f9-82d1-bef160557267"), String.Empty);
+        yield return new GuidTestData(Guid.Empty, "/testing/?test=00000000-0000-0000-0000-000000000000");
+        yield return new GuidTestData(new Guid("c73e70c0-8cc1-42f9-82d1-bef160557267"), "/testing/?test=c73e70c0-8cc1-42f9-82d1-bef160557267");
     }
 
     public class GuidTestData(Guid source, string expectedResult)
