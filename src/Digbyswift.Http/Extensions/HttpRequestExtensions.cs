@@ -298,25 +298,30 @@ public static class HttpRequestExtensions
         return request.Path.Value.EndsWith(".svg", StringComparison.OrdinalIgnoreCase);
     }
 
-    public static string PathAndQueryReplaceKey(this HttpRequest request, string replaceKey, object value)
+    public static string PathAndQueryReplaceValueOfKey(this HttpRequest request, string replaceKey, object value)
     {
         if (request == null)
             throw new ArgumentNullException(nameof(request));
 
-        var uri = request.GetAbsoluteUri();
+        if (!request.QueryString.HasValue)
+            return request.Path;
 
         // this gets all the query string key value pairs as a collection
-        var newQueryString = HttpUtility.ParseQueryString(uri.Query);
+        var newQueryString = HttpUtility.ParseQueryString(request.QueryString.ToString());
 
-        // this removes the key if exists
-        newQueryString.Remove(replaceKey);
+        if (newQueryString.AllKeys.ContainsIgnoreCase(replaceKey))
+        {
+            // this removes the key if exists
+            newQueryString.Remove(replaceKey);
 
-        // this gets the page path from root without QueryString
-        var pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
+            return newQueryString.Count > 0
+                ? $"{request.Path}?{replaceKey}={value}&{newQueryString}"
+                : $"{request.Path}?{replaceKey}={value}";
+        }
 
         return newQueryString.Count > 0
-            ? $"{pagePathWithoutQueryString}?{replaceKey}={value}&{newQueryString}"
-            : $"{pagePathWithoutQueryString}?{replaceKey}={value}";
+            ? $"{request.Path}?{newQueryString}"
+            : request.Path;
     }
 
     public static string PathAndQueryWithoutKey(this HttpRequest request, string excludeKey)
@@ -324,23 +329,28 @@ public static class HttpRequestExtensions
         if (request == null)
             throw new ArgumentNullException(nameof(request));
 
-        var uri = request.GetAbsoluteUri();
-
         if (String.IsNullOrWhiteSpace(excludeKey) || !request.Query.ContainsKey(excludeKey))
-            return uri.ToString();
+        {
+            return request.QueryString.HasValue
+                ? $"{request.Path}{request.QueryString}"
+                : request.Path;
+        }
 
         // this gets all the query string key value pairs as a collection
-        var newQueryString = HttpUtility.ParseQueryString(uri.Query);
+        var newQueryString = HttpUtility.ParseQueryString(request.QueryString.ToString());
+        if (!newQueryString.AllKeys.ContainsIgnoreCase(excludeKey))
+        {
+            return newQueryString.Count > 0
+                ? $"{request.Path}?{newQueryString}"
+                : request.Path;
+        }
 
         // this removes the key if exists
         newQueryString.Remove(excludeKey);
 
-        // this gets the page path from root without QueryString
-        var pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
-
         return newQueryString.Count > 0
-            ? $"{pagePathWithoutQueryString}?{newQueryString}"
-            : pagePathWithoutQueryString;
+            ? $"{request.Path}?{newQueryString}"
+            : request.Path;
     }
 
     public static string PathAndQueryWithoutKeys(this HttpRequest request, params string[] excludeKeys)
@@ -348,32 +358,32 @@ public static class HttpRequestExtensions
         if (request == null)
             throw new ArgumentNullException(nameof(request));
 
-        var uri = request.GetAbsoluteUri();
-
         if (excludeKeys.Length == 0)
-            return uri.ToString();
+        {
+            return request.QueryString.HasValue
+                ? $"{request.Path}{request.QueryString}"
+                : request.Path;
+        }
 
         // this gets all the query string key value pairs as a collection
-        var newQueryString = HttpUtility.ParseQueryString(uri.Query);
-
+        var newQueryString = HttpUtility.ParseQueryString(request.QueryString.ToString());
         foreach (var key in excludeKeys)
         {
             newQueryString.Remove(key);
         }
 
-        // this gets the page path from root without QueryString
-        var pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
-
         return newQueryString.Count > 0
-            ? $"{pagePathWithoutQueryString}?{newQueryString}"
-            : pagePathWithoutQueryString;
+            ? $"{request.Path}?{newQueryString}"
+            : request.Path;
     }
 
-    public static string PathAndQueryOnly(this HttpRequest request, string key, string? defaultValue)
+    public static string QueryOrDefault(this HttpRequest request, string key, string? defaultValue)
     {
         return request.Query.TryGetValue(key, out var value)
         ? $"?{key}={value}"
-        : !String.IsNullOrWhiteSpace(defaultValue) ? $"?{key}={defaultValue}" : String.Empty;
+        : !String.IsNullOrWhiteSpace(defaultValue)
+            ? $"?{key}={defaultValue}"
+            : String.Empty;
     }
 
     #endregion

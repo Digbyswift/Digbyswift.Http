@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Digbyswift.Extensions.Http.Tests.Extensions.HttpRequests;
+namespace Digbyswift.Extensions.Http.Tests.Extensions.HttpRequests.PathExtensions;
 
 [TestFixture]
-public class PathExtensionTests
+public class IsPngOrJpgPathExtensionTests
 {
     private HttpRequest _sut = null!;
 
@@ -21,8 +21,6 @@ public class PathExtensionTests
         _sut.Scheme = "http";
         _sut.Host = new HostString("localhost");
     }
-
-    #region IsPngOrJpeg
 
     [TestCase("/0.jpg")]
     [TestCase("/0.jpeg")]
@@ -126,6 +124,4 @@ public class PathExtensionTests
         // Assert
         Assert.That(result, Is.False);
     }
-
-    #endregion
 }
