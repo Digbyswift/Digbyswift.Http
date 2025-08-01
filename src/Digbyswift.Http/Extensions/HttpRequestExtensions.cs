@@ -379,8 +379,6 @@ public static class HttpRequestExtensions
 
     public static string QueryOrDefault(this HttpRequest request, string key, string? defaultValue)
     {
-        var testing = request.Query.TryGetValue(key, out var test);
-
         return request.Query.TryGetValue(key, out var value)
         ? $"?{key}={value}"
         : !String.IsNullOrWhiteSpace(defaultValue)

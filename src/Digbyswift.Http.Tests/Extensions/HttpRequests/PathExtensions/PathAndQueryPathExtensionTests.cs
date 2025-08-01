@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Digbyswift.Http.Extensions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.Extensions.Primitives;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -73,9 +75,9 @@ public class PathAndQueryPathExtensionTests
     {
         // Arrange
         const string key = "test";
+        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(key, "initial-value"));
 
         // Act
-        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(key, "initial-value"));
         var result = _sut.PathAndQueryReplaceValueOfKey(key, testData.Source);
 
         // Assert
@@ -120,7 +122,7 @@ public class PathAndQueryPathExtensionTests
         // Arrange
         const string keyToReplaceValueFor = "test";
         const string replacementValue = "testquery";
-        const string expectedPath = $"/testing/?{keyToReplaceValueFor}={replacementValue}";
+        const string expectedResult = $"/testing/?{keyToReplaceValueFor}={replacementValue}";
 
         const string nonMatchedKey = "mismatch";
 
@@ -130,14 +132,14 @@ public class PathAndQueryPathExtensionTests
         var result = _sut.PathAndQueryReplaceValueOfKey(nonMatchedKey, String.Empty);
 
         // Assert
-        Assert.That(result, Is.EqualTo(expectedPath));
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     [Test]
     public void PathAndQueryReplaceValueOfKey_ReturnsReplacementValue_WhenKeyIsMatched()
     {
         // Arrange
-        const string expectedPath = "/testing/?test=replaced";
+        const string expectedResult = "/testing/?test=replaced";
 
         const string keyToReplaceValueFor = "test";
         const string replacementValue = "replaced";
@@ -148,14 +150,14 @@ public class PathAndQueryPathExtensionTests
         var result = _sut.PathAndQueryReplaceValueOfKey(keyToReplaceValueFor, replacementValue);
 
         // Assert
-        Assert.That(result, Is.EqualTo(expectedPath));
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     [Test]
     public void PathAndQueryReplaceValueOfKey_ReturnsReplacementValue_WhenMultipleKeyMatchesArePresent()
     {
         // Arrange
-        const string expectedPath = "/testing/?test=replaced";
+        const string expectedResult = "/testing/?test=replaced";
 
         const string keyToReplaceValueFor = "test";
         const string replacementValue = "replaced";
@@ -167,7 +169,7 @@ public class PathAndQueryPathExtensionTests
         var result = _sut.PathAndQueryReplaceValueOfKey(keyToReplaceValueFor, replacementValue);
 
         // Assert
-        Assert.That(result, Is.EqualTo(expectedPath));
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     #endregion
@@ -188,7 +190,7 @@ public class PathAndQueryPathExtensionTests
     public void PathAndQueryWithoutKey_ReturnsOriginalPath_WhenKeyIsNotPresent()
     {
         // Arrange
-        const string expectedPath = "/testing/?test=testquery";
+        const string expectedResult = "/testing/?test=testquery";
         const string keyToReplaceValueFor = "test";
         const string mismatchedKey = "mismatch";
 
@@ -198,21 +200,21 @@ public class PathAndQueryPathExtensionTests
         var result = _sut.PathAndQueryWithoutKey(mismatchedKey);
 
         // Assert
-        Assert.That(result, Is.EqualTo(expectedPath));
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     [Test]
     public void PathAndQueryWithoutKey_ReturnsOriginalPath_WhenKeyAndQueryIsNotPresent()
     {
         // Arrange
-        const string expectedPath = "/testing/";
+        const string expectedResult = "/testing/";
         const string mismatchedKey = "mismatch";
 
         // Act
         var result = _sut.PathAndQueryWithoutKey(mismatchedKey);
 
         // Assert
-        Assert.That(result, Is.EqualTo(expectedPath));
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     #endregion
@@ -233,7 +235,7 @@ public class PathAndQueryPathExtensionTests
     public void PathAndQueryWithoutKeys_ReturnsOriginalPath_WhenKeysAreNotPresent()
     {
         // Arrange
-        const string expectedPath = "/testing/?test=testquery";
+        const string expectedResult = "/testing/?test=testquery";
         const string keyToReplaceValueFor = "test";
         const string mismatchedKey = "mismatch";
         const string mismatchedKeyTwo = "mismatch2";
@@ -244,21 +246,21 @@ public class PathAndQueryPathExtensionTests
         var result = _sut.PathAndQueryWithoutKeys(mismatchedKey, mismatchedKeyTwo);
 
         // Assert
-        Assert.That(result, Is.EqualTo(expectedPath));
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     [Test]
     public void PathAndQueryWithoutKeys_ReturnsOriginalPath_WhenKeysAndQueryAreNotPresent()
     {
         // Arrange
-        const string expectedPath = "/testing/";
+        const string expectedResult = "/testing/";
         const string mismatchedKey = "mismatch";
 
         // Act
         var result = _sut.PathAndQueryWithoutKeys(mismatchedKey);
 
         // Assert
-        Assert.That(result, Is.EqualTo(expectedPath));
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     #endregion
@@ -266,27 +268,46 @@ public class PathAndQueryPathExtensionTests
     #region PathAndQueryWithoutKeys
 
     [Test]
-    [Ignore("In progress")]
-    public void QueryOrDefault_ThrowsArgumentNullException_WhenRequestIsNull()
+    public void QueryOrDefault_ReturnsEmptyQuerystring_WhenRequestIsNull()
     {
         // Arrange
         HttpRequest request = null;
+        const string expectedResult = "";
 
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => request.QueryOrDefault(String.Empty, String.Empty));
+        // Arrange
+        const string keyToFind = "test";
+        const string initialValue = "initial-value";
+
+        var paramsDictionary = new Dictionary<string, StringValues>
+        {
+            { keyToFind, initialValue }
+        };
+
+        _sut.Query.Returns(new QueryCollection(paramsDictionary));
+
+        // Act
+        var result = _sut.QueryOrDefault(String.Empty, String.Empty);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     [Test]
-    [Ignore("In progress")]
     public void QueryOrDefault_ReturnsQuerystring_WhenKeyIsMatched()
     {
         // Arrange
-        const string expectedResult = "?test=testquery";
         const string keyToFind = "test";
+        const string initialValue = "initial-value";
+        const string expectedResult = $"?{keyToFind}={initialValue}";
+
+        var paramsDictionary = new Dictionary<string, StringValues>
+        {
+            { keyToFind, initialValue }
+        };
+
+        _sut.Query.Returns(new QueryCollection(paramsDictionary));
 
         // Act
-        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToFind, "testquery"));
-
         var result = _sut.QueryOrDefault(keyToFind, string.Empty);
 
         // Assert
@@ -294,18 +315,24 @@ public class PathAndQueryPathExtensionTests
     }
 
     [Test]
-    [Ignore("In progress")]
     public void QueryOrDefault_ReturnsFallBackQuerystring_WhenKeyIsNotMatched()
     {
         // Arrange
         const string keyToFind = "test";
-        const string keyValue = "testquery";
-        const string expectedResult = $"?{keyToFind}={keyValue}";
+        const string mismatchedKey = "mismatch";
+        const string initialValue = "initial-value";
+        const string fallbackValue = "testing";
+        const string expectedResult = $"?{mismatchedKey}={fallbackValue}";
+
+        var paramsDictionary = new Dictionary<string, StringValues>
+        {
+            { keyToFind, initialValue }
+        };
+
+        _sut.Query.Returns(new QueryCollection(paramsDictionary));
 
         // Act
-        _sut.QueryString = _sut.QueryString.Add(QueryString.Create(keyToFind, keyValue));
-
-        var result = _sut.QueryOrDefault(keyToFind, String.Empty);
+        var result = _sut.QueryOrDefault(mismatchedKey, fallbackValue);
 
         // Assert
         Assert.That(result, Is.EqualTo(expectedResult));
