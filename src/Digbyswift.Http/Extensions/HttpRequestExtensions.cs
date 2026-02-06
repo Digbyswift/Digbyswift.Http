@@ -15,12 +15,13 @@ public static class HttpRequestExtensions
 {
     #region Uri/Url
 
-    public static Uri GetAbsoluteUri(this HttpRequest request)
+    public static Uri GetAbsoluteUri(this HttpRequest request, int defaultPort = 80)
     {
         return new UriBuilder
         {
             Scheme = request.Scheme,
             Host = request.Host.Host,
+            Port = request.Host.Port ?? defaultPort,
             Path = request.Path.ToString(),
             Query = request.QueryString.ToString()
         }.Uri;
@@ -31,12 +32,13 @@ public static class HttpRequestExtensions
         return request.GetAbsoluteUri().ToString();
     }
 
-    public static Uri GetAbsoluteBaseUri(this HttpRequest request)
+    public static Uri GetAbsoluteBaseUri(this HttpRequest request, int defaultPort = 80)
     {
         return new UriBuilder
         {
             Scheme = request.Scheme,
-            Host = request.Host.Host
+            Host = request.Host.Host,
+            Port = request.Host.Port ?? defaultPort,
         }.Uri;
     }
 

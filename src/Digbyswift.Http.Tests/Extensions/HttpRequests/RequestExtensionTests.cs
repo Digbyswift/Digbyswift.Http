@@ -185,4 +185,87 @@ public class RequestExtensionTests
     }
 
     #endregion
+
+    #region GetAbsoluteBaseUri
+
+    [TestCase("http://www.digbyswift.com", "http://www.digbyswift.com")]
+    [TestCase("http://www.digbyswift.com/subfolder", "http://www.digbyswift.com")]
+    [TestCase("http://www.digbyswift.com:1234/subfolder", "http://www.digbyswift.com:1234")]
+    [TestCase("digby://www.digbyswift.com:1234/subfolder", "digby://www.digbyswift.com:1234")]
+    [TestCase("http://www.digbyswift.com?foo=bar", "http://www.digbyswift.com")]
+    public void GetAbsoluteBaseUri_ReturnsValue(string uriString, string expected)
+    {
+        var uri = new Uri(uriString);
+
+        _sut.Scheme = uri.Scheme;
+        _sut.Host = new HostString(uri.Host, uri.Port);
+        _sut.Path = uri.AbsolutePath;
+        _sut.QueryString = new QueryString(uri.Query);
+
+        Assert.That(_sut.GetAbsoluteBaseUri(), Is.EqualTo(new Uri(expected)));
+    }
+
+    #endregion
+
+    #region GetAbsoluteUri
+
+    [TestCase("http://www.digbyswift.com", "http://www.digbyswift.com")]
+    [TestCase("http://www.digbyswift.com/subfolder", "http://www.digbyswift.com/subfolder")]
+    [TestCase("http://www.digbyswift.com:1234/subfolder", "http://www.digbyswift.com:1234/subfolder")]
+    [TestCase("http://www.digbyswift.com?key=val", "http://www.digbyswift.com?key=val")]
+    [TestCase("http://www.digbyswift.com/subfolder?key=val&foo=bar", "http://www.digbyswift.com/subfolder?key=val&foo=bar")]
+    [TestCase("http://www.digbyswift.com:4321/subfolder?key=val&foo=bar", "http://www.digbyswift.com:4321/subfolder?key=val&foo=bar")]
+    public void GetAbsoluteUri_ReturnsValue(string uriString, string expected)
+    {
+        var uri = new Uri(uriString);
+
+        _sut.Scheme = uri.Scheme;
+        _sut.Host = new HostString(uri.Host, uri.Port);
+        _sut.Path = uri.AbsolutePath;
+        _sut.QueryString = new QueryString(uri.Query);
+
+        Assert.That(_sut.GetAbsoluteUri(), Is.EqualTo(new Uri(expected)));
+    }
+
+    #endregion
+
+    #region PathAndQueryWithoutKey
+
+    [TestCase("http://www.digbyswift.com?key=val", "http://www.digbyswift.com/")]
+    [TestCase("http://www.digbyswift.com?other=foo&key=val", "http://www.digbyswift.com/?other=foo")]
+    [TestCase("http://www.digbyswift.com:1234?other=foo&key=val", "http://www.digbyswift.com:1234/?other=foo")]
+    public void PathAndQueryWithoutKey_ReturnsValue_WhenKeyExists(string uriString, string expected)
+    {
+        var uri = new Uri(uriString);
+
+        _sut.Scheme = uri.Scheme;
+        _sut.Host = new HostString(uri.Host, uri.Port);
+        _sut.Path = uri.AbsolutePath;
+        _sut.QueryString = new QueryString(uri.Query);
+        _sut.Query = new MockQueryCollection(uri.Query);
+
+        Assert.That(_sut.PathAndQueryWithoutKey("key"), Is.EqualTo(expected));
+    }
+
+    #endregion
+
+    #region PathAndQueryReplaceKey
+
+    [TestCase("http://www.digbyswift.com?key=val", "http://www.digbyswift.com/?key=updated")]
+    [TestCase("http://www.digbyswift.com?other=foo&key=val", "http://www.digbyswift.com/?key=updated&other=foo")]
+    [TestCase("http://www.digbyswift.com:1234?other=foo&key=val", "http://www.digbyswift.com:1234/?key=updated&other=foo")]
+    public void PathAndQueryReplaceKey_ReturnsValue_WhenKeyExists(string uriString, string expected)
+    {
+        var uri = new Uri(uriString);
+
+        _sut.Scheme = uri.Scheme;
+        _sut.Host = new HostString(uri.Host, uri.Port);
+        _sut.Path = uri.AbsolutePath;
+        _sut.QueryString = new QueryString(uri.Query);
+        _sut.Query = new MockQueryCollection(uri.Query);
+
+        Assert.That(_sut.PathAndQueryReplaceKey("key", "updated"), Is.EqualTo(expected));
+    }
+
+    #endregion
 }
