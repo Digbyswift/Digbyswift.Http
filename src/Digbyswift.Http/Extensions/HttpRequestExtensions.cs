@@ -17,13 +17,18 @@ public static class HttpRequestExtensions
 
     public static Uri GetAbsoluteUri(this HttpRequest request)
     {
-        return new UriBuilder
+        var builder = new UriBuilder
         {
             Scheme = request.Scheme,
             Host = request.Host.Host,
             Path = request.Path.ToString(),
             Query = request.QueryString.ToString()
-        }.Uri;
+        };
+
+        if (request.Host.Port.HasValue)
+            builder.Port = request.Host.Port.Value;
+
+        return builder.Uri;
     }
 
     public static string GetAbsoluteUrl(this HttpRequest request)
@@ -33,11 +38,16 @@ public static class HttpRequestExtensions
 
     public static Uri GetAbsoluteBaseUri(this HttpRequest request)
     {
-        return new UriBuilder
+        var builder = new UriBuilder
         {
             Scheme = request.Scheme,
-            Host = request.Host.Host
-        }.Uri;
+            Host = request.Host.Host,
+        };
+
+        if (request.Host.Port.HasValue)
+            builder.Port = request.Host.Port.Value;
+
+        return builder.Uri;
     }
 
     public static string GetAbsoluteBaseUrl(this HttpRequest request)
