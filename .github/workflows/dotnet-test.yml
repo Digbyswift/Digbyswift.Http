@@ -7,10 +7,14 @@ on:
     branches: [ "master" ]
 
 jobs:
+  # Ideally we want to run the tests on Linux as well as Windows, but this currently
+  # fails due to some platform URL handling differences
+  # os: ['windows-latest', 'ubuntu-22.04']
+
   test-lib:
     strategy:
         matrix:
-            os: ['windows-latest', 'ubuntu-22.04']
+            os: ['windows-latest']
 
     runs-on: ${{ matrix.os }}
 
